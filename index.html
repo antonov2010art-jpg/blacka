@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>BLACK AWARDS</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="particles">
+  <span></span><span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span><span></span>
+</div>
+<div class="main">
+
+  <!-- ЛЕВАЯ КОЛОНКА -->
+  <div class="left">
+    <p style="opacity:0.8; margin-bottom:20px;">
+      Премия лучшего Discord сервера
+    </p>
+
+    <a href="vote.html">
+      <button class="btn">Голосовать</button>
+    </a>
+
+    <div style="margin-top:40px;">
+      <h3 style="margin-bottom:15px;">Номинации</h3>
+     <div class="nominations">
+  <div class="nom-card">BLACK KING года</div>
+  <div class="nom-card">Токсик года</div>
+  <div class="nom-card">Иван Золо года</div>
+  <div class="nom-card">Завоз года</div>
+  <div class="nom-card">Человек-мем года</div>
+  <div class="nom-card">Проект года</div>
+  <div class="nom-card">Фейл года</div>
+  <div class="nom-card">AFK года</div>
+  <div class="nom-card">Харизма года</div>
+  <div class="nom-card">Худший игрок года</div>
+</div>
+      <p style="margin-top:15px;">
+        <a href="results.html">Результаты</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- ПРАВАЯ КОЛОНКА -->
+  <div class="right">
+
+    <div class="logo-wrap">
+      <div class="crown">👑</div>
+      <h1 class="logo"><span>B</span><span>L</span><span>A</span><span>C</span><span>K</span><span>&nbsp;</span><span>A</span><span>W</span><span>A</span><span>R</span><span>D</span><span>S</span></h1>
+    </div>
+
+    <p style="opacity:0.75; margin-top:15px;">
+      Номинации года
+    </p>
+
+  </div>
+
+</div>
+
+<canvas id="cursor-line"></canvas>
+
+<script>
+  const canvas = document.getElementById('cursor-line');
+  const ctx = canvas.getContext('2d');
+
+  let points = [];
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+
+  document.addEventListener('mousemove', e => {
+    points.push({ x: e.clientX, y: e.clientY, life: 1 });
+    if (points.length > 40) points.shift();
+  });
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.beginPath();
+    for (let i = 0; i < points.length; i++) {
+      const p = points[i];
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    }
+
+    ctx.strokeStyle = 'rgba(255, 215, 120, 0.7)';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.shadowColor = 'rgba(255, 215, 120, 0.8)';
+    ctx.shadowBlur = 12;
+    ctx.stroke();
+
+    points.forEach(p => p.life -= 0.03);
+    points = points.filter(p => p.life > 0);
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+</script>
+</body>
+</html>

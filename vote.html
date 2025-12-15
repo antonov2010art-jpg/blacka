@@ -1,0 +1,237 @@
+<div id="auth">
+  <button class="btn" id="googleLogin">Войти через Google</button>
+</div>
+
+<!DOCTYPE html>
+<html lang="ru">
+<head> 
+  
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<meta charset="UTF-8">
+  
+<title>Голосование — BLACK AWARDS</title>
+
+  <!-- Шрифт -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="vote-container">
+
+  <h2>Голосование</h2>
+
+  <form id="voteForm">
+
+    <h3>BLACK KING года</h3>
+    <div class="options">
+      <button type="button">Бебр</button>
+      <button type="button">Артем</button>
+      <button type="button">Хинко</button>
+      <button type="button">Дипти</button>
+    </div>
+
+    <h3>Токсик года</h3>
+    <div class="options">
+      <button type="button">Лдешка</button>
+      <button type="button">Хинко</button>
+      <button type="button">Артем</button>
+      <button type="button">Гениус</button>
+    </div>
+
+    <h3>Иван Золо года</h3>
+    <div class="options">
+      <button type="button">Свомпи</button>
+      <button type="button">Петя</button>
+      <button type="button">Раут</button>
+      <button type="button">Леха</button>
+    </div>
+    <h3>Завоз года</h3>
+<div class="options">
+  <button type="button">Кинул декой под типа (Раут)</button>
+  <button type="button">«Артемка» и шляпка (Куррент)</button>
+  <button type="button">Приветы худшему игроку (Лдешка)</button>
+  <button type="button">2 головы ваншотом (Леха)</button>
+</div>
+
+<h3>Человек-мем года</h3>
+<div class="options">
+  <button type="button">Худший игрок (Гениус)</button>
+  <button type="button">Раут</button>
+  <button type="button">Бебр</button>
+  <button type="button">Лдешка</button>
+  <button type="button">Леха</button>
+  <button type="button">Петя</button>
+  <button type="button">Артем</button>
+</div>
+
+<h3>Проект года</h3>
+<div class="options">
+  <button type="button">Турнир 2x2 (Хинко)</button>
+  <button type="button">Бебр — творчество</button>
+  <button type="button">Выживание с модами (Бебр)</button>
+  <button type="button">BLACK AWARDS (Хинко)</button>
+</div>
+
+<h3>Фейл года</h3>
+<div class="options">
+  <button type="button">Лдешка — фейк админ x2</button>
+  <button type="button">7 утра валяемся…</button>
+  <button type="button">Свомпи мстит за Бебра</button>
+  <button type="button">Бабушка позвонила ночью (Дипти)</button>
+</div>
+
+<h3>AFK года</h3>
+<div class="options">
+  <button type="button">Куррент</button>
+  <button type="button">Мадара</button>
+  <button type="button">Гениус</button>
+  <button type="button">Дейзи</button>
+</div>
+
+<h3>Харизма года</h3>
+<div class="options">
+  <button type="button">Хинко</button>
+  <button type="button">Артем</button>
+  <button type="button">Лдешка</button>
+  <button type="button">Бебр</button>
+  <button type="button">Артем Оркинвайдер Мактрахер</button>
+</div>
+
+<h3>Худший игрок года</h3>
+<div class="options">
+  <button type="button">Артем</button>
+  <button type="button">Мапле</button>
+  <button type="button">Мэпле</button>
+  <button type="button">Гениус</button>
+</div>
+
+ <button type="submit" class="btn submit-btn" disabled>Отправить голос</button>
+<p id="vote-warning">Выберите вариант в каждой номинации</p>
+
+  </form>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  const optionGroups = document.querySelectorAll('.options');
+  const submitBtn = document.querySelector('.submit-btn');
+  const warning = document.getElementById('vote-warning');
+
+  function checkAllSelected() {
+    let allSelected = true;
+
+    optionGroups.forEach(group => {
+      if (!group.querySelector('.selected')) {
+        allSelected = false;
+      }
+    });
+
+    submitBtn.disabled = !allSelected;
+    warning.style.opacity = allSelected ? '0' : '1';
+  }
+
+  optionGroups.forEach(group => {
+    group.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        group.querySelectorAll('button')
+          .forEach(b => b.classList.remove('selected'));
+
+        btn.classList.add('selected');
+        checkAllSelected();
+      });
+    });
+  });
+
+  document.getElementById('voteForm').addEventListener('submit', e => {
+    e.preventDefault();
+    alert('Голос принят! 🏆');
+  });
+
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAZiHeDrbP0bXx9ZsDWqGZFw_Ljh_nhBqc",
+  authDomain: "black-awards.firebaseapp.com",
+  projectId: "black-awards",
+  storageBucket: "black-awards.firebasestorage.app",
+  messagingSenderId: "1028165098992",
+  appId: "1:1028165098992:web:506d988e4d97fdb062d135",
+  measurementId: "G-JHFC5J81E7"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const provider = new firebase.auth.GoogleAuthProvider();
+
+  const loginBtn = document.getElementById('googleLogin');
+  const authBlock = document.getElementById('auth');
+  const voteForm = document.getElementById('voteForm');
+
+  voteForm.style.display = 'none';
+
+  loginBtn.addEventListener('click', () => {
+    auth.signInWithPopup(provider).catch(err => {
+      alert(err.message);
+      console.error(err);
+    });
+  });
+
+  auth.onAuthStateChanged(async user => {
+    if (!user) return;
+
+    authBlock.style.display = 'none';
+    voteForm.style.display = 'block';
+
+    const userRef = db.collection('users').doc(user.uid);
+    const doc = await userRef.get();
+
+    if (doc.exists && doc.data().voted) {
+      alert('Ты уже голосовал');
+      voteForm.style.display = 'none';
+    }
+  });
+
+  voteForm.addEventListener('submit', async e => {
+    e.preventDefault();
+
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const vote = {};
+    document.querySelectorAll('.options').forEach(group => {
+      vote[group.previousElementSibling.innerText] =
+        group.querySelector('.selected').innerText;
+    });
+
+    await db.collection('votes').add({
+      userId: user.uid,
+      answers: vote,
+      createdAt: Date.now()
+    });
+
+    await db.collection('users').doc(user.uid).set({
+      email: user.email,
+      voted: true
+    });
+
+    alert('Голос принят! 🏆');
+    location.reload();
+  });
+
+});
+</script>
+
+</body>
+</html>
