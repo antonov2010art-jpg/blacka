@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>BLACK AWARDS — Админка</title>
+  <title>BLACK AWARDS — Админ</title>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -10,30 +10,37 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
       background: radial-gradient(circle at center, #2b0040, #000);
-      color: white;
+      color: #fff;
       font-family: Arial, sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .login-box {
+    .container {
       text-align: center;
+      max-width: 700px;
+      width: 100%;
+      padding: 30px;
     }
 
     .google-btn {
       padding: 16px 36px;
       font-size: 18px;
+      font-weight: 600;
       border-radius: 40px;
       border: none;
       cursor: pointer;
-      background: white;
-      color: black;
-      font-weight: 600;
+      background: #fff;
+      color: #000;
       transition: 0.3s;
     }
 
@@ -41,28 +48,41 @@
       transform: scale(1.08);
     }
 
-    #results {
-      max-width: 600px;
+    h2 {
+      margin-top: 40px;
+    }
+
+    .category {
       margin-top: 30px;
+      text-align: left;
+    }
+
+    .category h3 {
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+      padding-bottom: 5px;
+    }
+
+    .category p {
+      margin: 4px 0;
     }
   </style>
 </head>
 <body>
 
-<div class="login-box">
-  <!-- 🔥 ВОТ ОНА, КНОПКА -->
+<div class="container">
+  <!-- КНОПКА ВХОДА -->
   <button class="google-btn" id="googleLogin">
     Войти через Google
   </button>
 
+  <!-- РЕЗУЛЬТАТЫ -->
   <div id="results"></div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-
   const firebaseConfig = {
-  apiKey: "AIzaSyAZiHeDrbP0bXx9ZsDWqGZFw_Ljh_nhBqc",
+ apiKey: "AIzaSyAZiHeDrbP0bXx9ZsDWqGZFw_Ljh_nhBqc",
   authDomain: "black-awards.firebaseapp.com",
   projectId: "black-awards",
   storageBucket: "black-awards.firebasestorage.app",
@@ -80,17 +100,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginBtn = document.getElementById('googleLogin');
   const resultsDiv = document.getElementById('results');
 
-  loginBtn.addEventListener('click', () => {
-    auth.signInWithPopup(provider).catch(err => {
-      alert(err.message);
-      console.error(err);
-    });
+  // ===== КНОПКА ВХОДА (REDIRECT — НЕ БЛОКИРУЕТСЯ) =====
+  loginBtn.addEventListener('click', async () => {
+    try {
+      await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+      await auth.signInWithRedirect(provider);
+    } catch (e) {
+      alert(e.message);
+      console.error(e);
+    }
   });
 
+  // ===== ЛОВИМ РЕЗУЛЬТАТ REDIRECT =====
+  auth.getRedirectResult().catch(err => {
+    console.error('Redirect error:', err);
+  });
+
+  // ===== ПОСЛЕ ВХОДА =====
   auth.onAuthStateChanged(async user => {
     if (!user) return;
 
-    // 🔐 ПРОВЕРКА АДМИНА
+    // 🔐 ЗАМЕНИ НА СВОЮ GOOGLE-ПОЧТУ
     if (user.email !== "antonov2010art@gmail.com") {
       alert("Нет доступа");
       auth.signOut();
@@ -98,33 +128,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     loginBtn.style.display = 'none';
+    resultsDiv.innerHTML = '<h2>Итоги голосования</h2>';
 
-    const votes = await db.collection('votes').get();
+    const snapshot = await db.collection('votes').get();
     const results = {};
 
-    votes.forEach(doc => {
+    snapshot.forEach(doc => {
       const answers = doc.data().answers;
-      for (const cat in answers) {
-        if (!results[cat]) results[cat] = {};
-        results[cat][answers[cat]] =
-          (results[cat][answers[cat]] || 0) + 1;
+      for (const category in answers) {
+        if (!results[category]) results[category] = {};
+        const name = answers[category];
+        results[category][name] = (results[category][name] || 0) + 1;
       }
     });
 
-  resultsDiv.innerHTML = '';
+    for (const category in results) {
+      const block = document.createElement('div');
+      block.className = 'category';
+      block.innerHTML = <h3>${category}</h3>;
 
-for (const cat in results) {
-  resultsDiv.innerHTML += <h3>${cat}</h3>;
-  for (const name in results[cat]) {
-    resultsDiv.innerHTML += <p>${name}: ${results[cat][name]}</p>;
-  }
+      for (const name in results[category]) {
+        block.innerHTML += <p>${name} — ${results[category][name]}</p>;
       }
+
+      resultsDiv.appendChild(block);
     }
   });
-
-});
 </script>
 
 </body>
 </html>
 
+   
