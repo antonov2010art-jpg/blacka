@@ -1,26 +1,8 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <title>BLACK AWARDS — Админ</title>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-</head>
-<body>
-
-<button onclick="login()">Войти через Google</button>
-<div id="results"></div>
-
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+
   const firebaseConfig = {
-  apiKey: "AIzaSyAZiHeDrbP0bXx9ZsDWqGZFw_Ljh_nhBqc",
-  authDomain: "black-awards.firebaseapp.com",
-  projectId: "black-awards",
-  storageBucket: "black-awards.firebasestorage.app",
-  messagingSenderId: "1028165098992",
-  appId: "1:1028165098992:web:506d988e4d97fdb062d135",
-  measurementId: "G-JHFC5J81E7"
+    // 🔴 ТОТ ЖЕ CONFIG, ЧТО В vote.html
   };
 
   firebase.initializeApp(firebaseConfig);
@@ -29,12 +11,27 @@
   const db = firebase.firestore();
   const provider = new firebase.auth.GoogleAuthProvider();
 
-  function login() {
-    auth.signInWithPopup(provider);
-  }
+  const loginBtn = document.getElementById('googleLogin');
+  const resultsDiv = document.getElementById('results');
+
+  loginBtn.addEventListener('click', () => {
+    auth.signInWithPopup(provider).catch(err => {
+      alert(err.message);
+      console.error(err);
+    });
+  });
 
   auth.onAuthStateChanged(async user => {
     if (!user) return;
+
+    // 🔐 ПРОВЕРКА АДМИНА
+    if (user.email !== "ТВОЯПОЧТА@gmail.com") {
+      alert("Нет доступа");
+      auth.signOut();
+      return;
+    }
+
+    loginBtn.style.display = 'none';
 
     const votes = await db.collection('votes').get();
     const results = {};
@@ -43,20 +40,18 @@
       const answers = doc.data().answers;
       for (const cat in answers) {
         if (!results[cat]) results[cat] = {};
-        results[cat][answers[cat]] = (results[cat][answers[cat]] || 0) + 1;
+        results[cat][answers[cat]] =
+          (results[cat][answers[cat]] || 0) + 1;
       }
     });
 
-    const div = document.getElementById('results');
     for (const cat in results) {
-      div.innerHTML += <h3>${cat}</h3>;
+      resultsDiv.innerHTML += <h3>${cat}</h3>;
       for (const name in results[cat]) {
-        div.innerHTML += <p>${name} — ${results[cat][name]}</p>;
+        resultsDiv.innerHTML += <p>${name}: ${results[cat][name]}</p>;
       }
     }
   });
+
+});
 </script>
-
-</body>
-
-</html>
