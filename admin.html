@@ -138,10 +138,13 @@ body {
 <script>
 /* 🔴 ВСТАВЬ СВОЙ firebaseConfig */
 const firebaseConfig = {
-  apiKey: "XXXXXXXX",
-  authDomain: "XXXXXXXX.firebaseapp.com",
-  projectId: "XXXXXXXX",
-  appId: "XXXXXXXX"
+ apiKey: "AIzaSyAZiHeDrbP0bXx9ZsDWqGZFw_Ljh_nhBqc",
+  authDomain: "black-awards.firebaseapp.com",
+  projectId: "black-awards",
+  storageBucket: "black-awards.firebasestorage.app",
+  messagingSenderId: "1028165098992",
+  appId: "1:1028165098992:web:506d988e4d97fdb062d135",
+  measurementId: "G-JHFC5J81E7"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -151,7 +154,7 @@ const db = firebase.firestore();
 const provider = new firebase.auth.GoogleAuthProvider();
 
 /* 🔐 ТВОЯ ПОЧТА АДМИНА */
-const ADMIN_EMAIL = "ТВОЯПОЧТА@gmail.com";
+const ADMIN_EMAIL = "antonov2010art@gmail.com";
 
 const loginScreen = document.getElementById('loginScreen');
 const adminPanel = document.getElementById('adminPanel');
@@ -221,3 +224,4 @@ async function loadResults() {
 
 </body>
 </html>
+
