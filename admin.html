@@ -4,45 +4,41 @@
   <meta charset="UTF-8">
   <title>BLACK AWARDS — Админка</title>
 
-  <!-- Firebase -->
+  <!-- Firebase (ТОЧНО КАК В РАБОЧЕМ ТЕСТЕ) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <style>
     body {
-      margin: 0;
-      min-height: 100vh;
-      background: radial-gradient(circle at center, #2b0040, #000);
-      color: white;
+      background: #000;
+      color: #fff;
       font-family: Arial, sans-serif;
+      min-height: 100vh;
+      margin: 0;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
     .box {
-      max-width: 700px;
-      width: 100%;
-      padding: 30px;
+      width: 700px;
       text-align: center;
     }
 
     button {
-      padding: 16px 36px;
+      padding: 16px 32px;
       font-size: 18px;
-      border-radius: 40px;
+      border-radius: 30px;
       border: none;
       cursor: pointer;
-      background: white;
-      color: black;
       font-weight: 600;
     }
 
     h2 {
       margin-top: 40px;
       border-bottom: 1px solid #444;
-      padding-bottom: 5px;
+      padding-bottom: 6px;
     }
 
     .row {
@@ -55,12 +51,12 @@
 <body>
 
 <div class="box">
-  <button id="loginBtn">Войти через Google</button>
+  <button id="login">Войти через Google</button>
   <div id="content"></div>
 </div>
 
 <script>
-/* ================== CONFIG ================== */
+/* ========== CONFIG (ТОТ ЖЕ, ЧТО РАБОТАЛ) ========== */
 
 const firebaseConfig = {
    apiKey: "AIzaSyAZiHeDrbP0bXx9ZsDWqGZFw_Ljh_nhBqc",
@@ -76,7 +72,7 @@ const ADMINS = [
   "antonov2010art@gmail.com"
 ];
 
-/* ================== INIT ================== */
+/* ========== INIT ========== */
 
 firebase.initializeApp(firebaseConfig);
 
@@ -84,24 +80,20 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 const provider = new firebase.auth.GoogleAuthProvider();
 
-const loginBtn = document.getElementById('loginBtn');
+const loginBtn = document.getElementById('login');
 const content = document.getElementById('content');
 
-/* ================== LOGIN (REDIRECT) ================== */
+/* ========== ВХОД — ТОЧНО КАК В ТЕСТЕ ========== */
 
 loginBtn.onclick = () => {
-  auth.signInWithRedirect(provider);
+  auth.signInWithPopup(provider)
+    .catch(err => {
+      alert(err.message);
+      console.error(err);
+    });
 };
 
-/* ================== REDIRECT RESULT ================== */
-
-auth.getRedirectResult()
-  .catch(err => {
-    alert(err.code + "\n" + err.message);
-    console.error(err);
-  });
-
-/* ================== AUTH STATE ================== */
+/* ========== АВТОРИЗАЦИЯ ========== */
 
 auth.onAuthStateChanged(async user => {
   if (!user) return;
@@ -118,7 +110,7 @@ auth.onAuthStateChanged(async user => {
   loadResults();
 });
 
-/* ================== LOAD RESULTS ================== */
+/* ========== ЗАГРУЗКА ГОЛОСОВ ========== */
 
 async function loadResults() {
   const snap = await db.collection('votes').get();
@@ -136,7 +128,7 @@ async function loadResults() {
   renderResults(results);
 }
 
-/* ================== RENDER ================== */
+/* ========== ВЫВОД ========== */
 
 function renderResults(results) {
   for (const cat in results) {
