@@ -111,10 +111,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    for (const cat in results) {
-     resultsDiv.innerHTML += <h3>${cat}</h3>;
-      for (const name in results[cat]) {
-        resultsDiv.innerHTML += <p>${name}: ${results[cat][name]}</p>;
+  resultsDiv.innerHTML = '';
+
+for (const cat in results) {
+  resultsDiv.innerHTML += <h3>${cat}</h3>;
+  for (const name in results[cat]) {
+    resultsDiv.innerHTML += <p>${name}: ${results[cat][name]}</p>;
+  }
       }
     }
   });
