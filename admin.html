@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!user) return;
 
     // 🔐 ПРОВЕРКА АДМИНА
-    if (user.email !== "antonov2010artА@gmail.com") {
+    if (user.email !== "antonov2010art@gmail.com") {
       alert("Нет доступа");
       auth.signOut();
       return;
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     for (const cat in results) {
-      resultsDiv.innerHTML += <h3>${cat}</h3>;
+     resultsDiv.innerHTML += <h3>${cat}</h3>;
       for (const name in results[cat]) {
         resultsDiv.innerHTML += <p>${name}: ${results[cat][name]}</p>;
       }
@@ -124,3 +124,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
